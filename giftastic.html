@@ -3,12 +3,56 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
+    <title>Giftastic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
 </head>
 <body>
-    
+    <div id="labels"></div>
+    <div id="gifs"></div>
+    <div id="input">
+        <h2>Add a music genre</h2>
+        <form id="genreForm">
+            <input type="text" name="genre" id="input">
+        </form>
+        <input type="button" form="genreForm" value="Submit" onclick="addtolist()">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var topics = ["metal", "rock", "pop"];
+        function populate(){
+            console.log(topics);
+            $("#labels").empty();
+            for(i=0; i<topics.length; i++) {
+            var btn = document.createElement("button");
+            var t = document.createTextNode(topics[i]); 
+            btn.appendChild(t);  
+            var xhr = "https://api.giphy.com/v1/gifs/search?q=" + topics[i] + "&api_key=HjFGVhZIZF8HjFFCm0jWYak9NHj3XYBR&limit=5";
+            btn.setAttribute("api", xhr);
+            $("#labels").append(btn);
+            addImage();
+            } 
+        }
+        populate();
+        function addImage(){
+            $("button").on("click", function() {
+            $.ajax({
+                url: this.getAttribute("api"),
+                method: "GET"
+            }).then(function(response) {
+                var results = response.data;
+                for (var i = 0; i < results.length; i++) {
+                    $("#gifs").append("<img src=" + results[i].images.original.url + ">");
+                    }
+                }
+                );
+            });
+        }
+        function addtolist(){
+            var genre = document.getElementById("genreForm")[0].value;
+            topics.push(genre);
+            populate();
+        }
+    </script>
 </body>
 </html>
